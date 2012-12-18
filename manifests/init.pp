@@ -94,8 +94,13 @@ define duplicity(
     fail("You need to set all of your key variables: dest_id, dest_key")
   }
 
+  $environment = $_cloud ? {
+    'cf' => ["CLOUDFILES_USERNAME='$_dest_id'", "CLOUDFILES_APIKEY='$_dest_key'"],
+    's3' => ["AWS_ACCESS_KEY_ID='$_dest_id'", "AWS_SECRET_ACCESS_KEY='$_dest_key'"],
+  }
+
   cron { $name :
-    environment => ["AWS_ACCESS_KEY_ID='$_dest_id'", "AWS_SECRET_ACCESS_KEY='$_dest_key'"],
+    environment => $environment,
     command => template("duplicity/file-backup.sh.erb"),
     user => 'root',
     minute => $_minute,

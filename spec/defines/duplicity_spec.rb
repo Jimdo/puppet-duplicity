@@ -12,6 +12,28 @@ describe 'duplicity', :type => :define do
 
   let(:title) { 'some_backup_name' }
 
+  context "cloud files environment" do
+
+    let(:params) {
+      {
+        :bucket       => 'somebucket',
+        :directory    => '/etc/',
+        :dest_id  => 'some_id',
+        :dest_key => 'some_key',
+        :cloud    => 'cf'
+      }
+    }
+
+    it "adds a cronjob at midnight be default" do
+      should contain_cron('some_backup_name') \
+        .with_command("duplicity --full-if-older-than 30D --s3-use-new-style --no-encryption --include '/etc/' --exclude '**' / 'cf\+http://somebucket/#{fqdn}/some_backup_name/'") \
+        .with_user('root') \
+        .with_minute(0) \
+        .with_hour(0) \
+        .with_environment([ 'CLOUDFILES_USERNAME=\'some_id\'', 'CLOUDFILES_APIKEY=\'some_key\'' ])
+    end
+  end
+
   context "no encryption" do
 
     let(:params) {
