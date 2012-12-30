@@ -81,8 +81,6 @@ define duplicity(
     default => " && duplicity remove-older-than $_remove_older_than --force '$_target_url'"
   }
 
-  $_target_url = "'$_cloud+http://$_bucket/$_folder/$name/'"
-
   if !($_cloud in [ 's3', 'cf' ]) {
     fail('$cloud required and at this time supports s3 for amazon s3 and cf for Rackspace cloud files')
   }
@@ -90,6 +88,12 @@ define duplicity(
   if !$_bucket {
     fail('You need to define a container/bucket name!')
   }
+
+  $_target_url = $_cloud ? {
+    'cf' => "'cf+http://$_bucket'",
+    's3' => "'s3+http://$_bucket/$_folder/$name/'"
+  }
+
   if (!$_dest_id or !$_dest_key) {
     fail("You need to set all of your key variables: dest_id, dest_key")
   }

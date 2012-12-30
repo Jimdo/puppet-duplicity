@@ -26,7 +26,7 @@ describe 'duplicity', :type => :define do
 
     it "adds a cronjob at midnight be default" do
       should contain_cron('some_backup_name') \
-        .with_command("duplicity --full-if-older-than 30D --s3-use-new-style --no-encryption --include '/etc/' --exclude '**' / 'cf\+http://somebucket/#{fqdn}/some_backup_name/'") \
+        .with_command("duplicity --full-if-older-than 30D --s3-use-new-style --no-encryption --include '/etc/' --exclude '**' / 'cf\+http://somebucket'") \
         .with_user('root') \
         .with_minute(0) \
         .with_hour(0) \
