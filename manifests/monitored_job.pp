@@ -1,4 +1,4 @@
-define duplicity(
+define duplicity::monitored_job(
   $ensure = 'present',
   $directory = undef,
   $bucket = undef,
@@ -12,8 +12,9 @@ define duplicity(
   $full_if_older_than = undef,
   $pre_command = undef,
   $remove_older_than = undef,
-) {
-
+  $execution_timeout
+)
+{
   include duplicity::params
   include duplicity::packages
 
@@ -44,12 +45,13 @@ define duplicity(
     default => $minute
   }
 
-  cron { $name :
+  periodicnoise::monitored_cron { $name :
     ensure => $ensure,
     command => $spoolfile,
     user => 'root',
     minute => $_minute,
     hour => $_hour,
+    execution_timeout => $execution_timeout,
   }
 
   File[$spoolfile]->Cron[$name]

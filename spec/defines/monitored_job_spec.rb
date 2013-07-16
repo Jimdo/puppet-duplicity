@@ -1,12 +1,23 @@
 require 'spec_helper'
 
-describe 'duplicity', :type => :define do
+describe 'duplicity::monitored_job' do
+
+  let (:params) { {
+    :bucket            => 'somebucket',
+    :directory         => '/root/mysqldump',
+    :dest_id           => 'some_id',
+    :dest_key          => 'some_key',
+    :minute            => 0,
+    :hour              => 0,
+    :execution_timeout => '24h',
+    :cloud             => 's3',
+  } }
 
   fqdn = 'somehost.domaindomain.org'
 
   let(:facts) {
     {
-      :fqdn => fqdn
+      :fqdn => fqdn,
     }
   }
 
@@ -14,30 +25,14 @@ describe 'duplicity', :type => :define do
 
   let(:spoolfile) { "/var/spool/duplicity/#{title}.sh" }
 
-  let(:params) {
-    {
-      :bucket       => 'somebucket',
-      :directory    => '/etc/',
-      :dest_id      => 'some_id',
-      :dest_key     => 'some_key',
-    }
-  }
-
-  it "adds a cronjob at midnight by default" do
-
-    should contain_cron(title) \
-      .with_command(spoolfile) \
-      .with_minute(0) \
-      .with_hour(0)
-  end
-
-  it 'should create the spoolfile before adding the cron using it' do
-    should contain_file(spoolfile).with_before("Cron[#{title}]")
-  end
-
-  it 'should run the cron as root because backups usually need full access' do
-    should contain_cron(title) \
-      .with_user('root')
+  it 'should monitor the duplicity backup job with periodic noise' do
+    should contain_periodicnoise__monitored_cron(title).with({
+      :command => spoolfile,
+      :user    => 'root',
+      :minute  => 0,
+      :hour    => 0,
+      :execution_timeout => '24h',
+    })
   end
 
   context "with defined backup time" do
@@ -47,6 +42,7 @@ describe 'duplicity', :type => :define do
         :bucket       => 'somebucket',
         :directory    => '/etc/',
         :dest_id      => 'some_id',
+        :execution_timeout => '24h',
         :dest_key     => 'some_key',
         :hour         => 5,
         :minute       => 23
@@ -54,7 +50,7 @@ describe 'duplicity', :type => :define do
     }
 
     it "should be able to handle a specified backup time" do
-       should contain_cron(title) \
+       should contain_periodicnoise__monitored_cron(title) \
          .with_minute(23) \
          .with_hour(5)
     end
@@ -63,6 +59,7 @@ describe 'duplicity', :type => :define do
   context 'with duplicity global parameters passed on' do
     let(:params) {
       {
+        :execution_timeout => '24h',
         :directory    => '/etc/',
       }
     }
@@ -76,7 +73,7 @@ describe 'duplicity', :type => :define do
     }
 
     it "should be able to use the globally configured cloud key pair" do
-      should contain_cron(title) \
+      should contain_periodicnoise__monitored_cron(title) \
         .with_command(spoolfile)
 
       should contain_file(spoolfile) \
@@ -85,23 +82,24 @@ describe 'duplicity', :type => :define do
         .with_content(/another_bucket/)
 
     end
+
   end
 
   context 'with ensure => absent' do
 
     let(:params) {
       {
+        :execution_timeout => '24h',
         :ensure       => 'absent'
       }
     }
 
     it 'should remove the cron and the duplicity job' do
-      should contain_cron(title) \
+      should contain_periodicnoise__monitored_cron(title) \
         .with_ensure('absent')
       should contain_duplicity__job(title) \
         .with_ensure('absent')
     end
-
   end
 
   # TODO: test parameter passing for all duplicity::job call
@@ -114,6 +112,7 @@ describe 'duplicity', :type => :define do
         :directory    => '/etc/',
         :dest_id  => 'some_id',
         :dest_key => 'some_key',
+        :execution_timeout => '24h',
         :cloud    => 'cf'
       }
     }

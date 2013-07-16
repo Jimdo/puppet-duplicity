@@ -1,3 +1,5 @@
 fixtures:
+  repositories:
+    "periodicnoise" : "https://github.com/Jimdo/puppet-periodicnoise.git"
   symlinks:
     "duplicity": "#{source_dir}"
