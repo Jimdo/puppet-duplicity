@@ -104,9 +104,12 @@ define duplicity::job(
     }
   }
 
+  $_cfhash = { 'CLOUDFILES_USERNAME' => $_dest_id, 'CLOUDFILES_APIKEY'     => $_dest_key,}
+  $_awshash = { 'AWS_ACCESS_KEY_ID'  => $_dest_id, 'AWS_SECRET_ACCESS_KEY' => $_dest_key,}
+
   $_environment = $_cloud ? {
-    'cf' => ["CLOUDFILES_USERNAME='$_dest_id'", "CLOUDFILES_APIKEY='$_dest_key'"],
-    's3' => ["AWS_ACCESS_KEY_ID='$_dest_id'", "AWS_SECRET_ACCESS_KEY='$_dest_key'"],
+    'cf' => $_cfhash,
+    's3' => $_awshash,
   }
 
   $_target_url = $_cloud ? {

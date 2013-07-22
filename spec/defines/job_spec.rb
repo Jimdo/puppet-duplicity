@@ -45,8 +45,8 @@ describe 'duplicity::job' do
 
     it "adds a spoolfile which contains the generated backup script" do
       should contain_file(spoolfile) \
-        .with_content(/^CLOUDFILES_USERNAME='some_id'$/)\
-        .with_content(/^CLOUDFILES_APIKEY='some_key'$/)\
+        .with_content(/^export CLOUDFILES_USERNAME='some_id'$/)\
+        .with_content(/^export CLOUDFILES_APIKEY='some_key'$/)\
         .with_content(/^duplicity --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' \/ 'cf\+http:\/\/somebucket'$/)
     end
   end
@@ -65,8 +65,8 @@ describe 'duplicity::job' do
 
     it "adds spoolfile which contains the generated backup script" do
       should contain_file(spoolfile) \
-        .with_content(/^AWS_ACCESS_KEY_ID='some_id'$/)\
-        .with_content(/^AWS_SECRET_ACCESS_KEY='some_key'$/)\
+        .with_content(/^export AWS_ACCESS_KEY_ID='some_id'$/)\
+        .with_content(/^export AWS_SECRET_ACCESS_KEY='some_key'$/)\
         .with_content(/^duplicity --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
     end
 
@@ -189,8 +189,8 @@ describe 'duplicity::job' do
 
     it "should be able to set a global cloud key pair config" do
       should contain_file(spoolfile) \
-        .with_content(/^AWS_ACCESS_KEY_ID='some_id'$/)\
-        .with_content(/^AWS_SECRET_ACCESS_KEY='some_key'$/)\
+        .with_content(/^export AWS_ACCESS_KEY_ID='some_id'$/)\
+        .with_content(/^export AWS_SECRET_ACCESS_KEY='some_key'$/)\
         .with_content(/another_bucket/)
 
     end

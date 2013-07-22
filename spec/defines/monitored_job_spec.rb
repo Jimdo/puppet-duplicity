@@ -77,8 +77,8 @@ describe 'duplicity::monitored_job' do
         .with_command(spoolfile)
 
       should contain_file(spoolfile) \
-        .with_content(/^AWS_ACCESS_KEY_ID='some_id'$/)\
-        .with_content(/^AWS_SECRET_ACCESS_KEY='some_key'$/)\
+        .with_content(/^export AWS_ACCESS_KEY_ID='some_id'$/)\
+        .with_content(/^export AWS_SECRET_ACCESS_KEY='some_key'$/)\
         .with_content(/another_bucket/)
 
     end
