@@ -11,6 +11,7 @@ define duplicity::job(
   $full_if_older_than = undef,
   $pre_command = undef,
   $remove_older_than = undef,
+  $default_exit_code = undef
 ) {
 
   include duplicity::params

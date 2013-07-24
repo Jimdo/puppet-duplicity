@@ -35,6 +35,12 @@ describe 'duplicity::monitored_job' do
     })
   end
 
+  it 'should always report failing backups as critical' do
+    should contain_duplicity__job(title).with({
+      :default_exit_code => 2,
+    })
+  end
+
   context "with defined backup time" do
 
     let(:params) {

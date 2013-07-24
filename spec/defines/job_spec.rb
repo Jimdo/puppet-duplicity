@@ -57,9 +57,9 @@ describe 'duplicity::job' do
       {
         :bucket       => 'somebucket',
         :directory    => '/etc/',
-        :dest_id  => 'some_id',
-        :dest_key => 'some_key',
-        :spoolfile => spoolfile,
+        :dest_id      => 'some_id',
+        :dest_key     => 'some_key',
+        :spoolfile    => spoolfile,
       }
     }
 
@@ -69,7 +69,6 @@ describe 'duplicity::job' do
         .with_content(/^export AWS_SECRET_ACCESS_KEY='some_key'$/)\
         .with_content(/^duplicity --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
     end
-
 
     it "should make a full backup every X days" do
 
@@ -85,7 +84,7 @@ describe 'duplicity::job' do
         :dest_id            => 'some_id',
         :dest_key           => 'some_key',
         :full_if_older_than => '5D',
-        :spoolfile => spoolfile,
+        :spoolfile          => spoolfile,
       }
     }
 
@@ -103,8 +102,8 @@ describe 'duplicity::job' do
         :directory          => '/etc/',
         :dest_id            => 'some_id',
         :dest_key           => 'some_key',
-        :remove_older_than => '7D',
-        :spoolfile => spoolfile,
+        :remove_older_than  => '7D',
+        :spoolfile          => spoolfile,
       }
     }
 
@@ -123,10 +122,10 @@ describe 'duplicity::job' do
       {
         :bucket       => 'somebucket',
         :directory    => '/etc/',
-        :dest_id  => 'some_id',
-        :dest_key => 'some_key',
-        :pubkey_id   => some_pubkey_id,
-        :spoolfile => spoolfile,
+        :dest_id      => 'some_id',
+        :dest_key     => 'some_key',
+        :pubkey_id    => some_pubkey_id,
+        :spoolfile    => spoolfile,
       }
     }
 
@@ -148,7 +147,7 @@ describe 'duplicity::job' do
       {
         :directory    => '/etc/',
         :bucket       => 'from_param',
-        :spoolfile => spoolfile,
+        :spoolfile    => spoolfile,
       }
     }
 
@@ -170,7 +169,7 @@ describe 'duplicity::job' do
     let(:params) {
       {
         :directory    => '/etc/',
-        :spoolfile => spoolfile,
+        :spoolfile    => spoolfile,
       }
     }
 
@@ -208,7 +207,7 @@ describe 'duplicity::job' do
         :dest_id      => 'some_id',
         :dest_key     => 'some_key',
         :pre_command  => 'mysqldump database',
-        :spoolfile => spoolfile,
+        :spoolfile    => spoolfile,
       }
     }
 
@@ -218,12 +217,39 @@ describe 'duplicity::job' do
     end
   end
 
+  context "with coercion of non-zero return value to specific one" do
+
+    exit_code = 2
+
+    let(:params) {
+      {
+        :bucket             => 'somebucket',
+        :directory          => '/foo/bar/',
+        :dest_id            => 'some_id',
+        :dest_key           => 'some_key',
+        :spoolfile          => spoolfile,
+        :default_exit_code  => exit_code,
+      }
+    }
+
+    it "should ignore SIGHUP and SIGWINCH" do
+      should contain_file(spoolfile) \
+        .with_content(/^trap \"\" HUP WINCH$/)
+    end
+
+    it "should convert any exit code other than zero to the default exit code" do
+      should contain_file(spoolfile) \
+        .with_content(/^trap \"exit #{exit_code}\" ERR INT QUIT ABRT PIPE TERM XCPU XFSZ$/)
+    end
+  end
+
+
   context 'with ensure => absent' do
 
     let(:params) {
       {
         :ensure       => 'absent',
-        :spoolfile => spoolfile,
+        :spoolfile    => spoolfile,
       }
     }
 
@@ -242,21 +268,21 @@ describe 'duplicity::job' do
     },
     {
       :params => {
-        :ensure => 'foo',
+        :ensure    => 'foo',
         :spoolfile => "/path/to/some/spoolfile",
       },
       :expected_error_pattern => /ensure parameter must be absent or present/,
     },
     {
       :params => {
-        :ensure => 'present',
+        :ensure    => 'present',
         :spoolfile => "/path/to/some/spoolfile",
       },
       :expected_error_pattern => /directory parameter has to be passed if ensure != absent/,
     },
     {
       :params => {
-        :ensure => 'present',
+        :ensure    => 'present',
         :spoolfile => "/path/to/some/spoolfile",
         :directory => '/path/to/backup',
       },
@@ -264,30 +290,30 @@ describe 'duplicity::job' do
     },
     {
       :params => {
-        :ensure => 'present',
+        :ensure    => 'present',
         :spoolfile => "/path/to/some/spoolfile",
         :directory => '/path/to/backup',
-        :bucket       => 'somebucket',
+        :bucket    => 'somebucket',
       },
       :expected_error_pattern => /You need to set all of your key variables: dest_id, dest_key/,
     },
     {
       :params => {
-        :ensure => 'present',
+        :ensure    => 'present',
         :spoolfile => "/path/to/some/spoolfile",
         :directory => '/path/to/backup',
-        :bucket       => 'somebucket',
-        :dest_id => 'some_id',
+        :bucket    => 'somebucket',
+        :dest_id   => 'some_id',
       },
       :expected_error_pattern => /You need to set all of your key variables: dest_id, dest_key/,
     },
     {
       :params => {
-        :ensure => 'present',
+        :ensure    => 'present',
         :spoolfile => "/path/to/some/spoolfile",
         :directory => '/path/to/backup',
-        :bucket       => 'somebucket',
-        :dest_key => 'some_key',
+        :bucket    => 'somebucket',
+        :dest_key  => 'some_key',
       },
       :expected_error_pattern => /You need to set all of your key variables: dest_id, dest_key/,
     },

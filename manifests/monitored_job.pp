@@ -33,6 +33,7 @@ define duplicity::monitored_job(
     full_if_older_than => $full_if_older_than,
     pre_command => $pre_command,
     remove_older_than => $remove_older_than,
+    default_exit_code => 2,
   }
 
   $_hour = $hour ? {
