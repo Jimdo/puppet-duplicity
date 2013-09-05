@@ -1,6 +1,6 @@
 define duplicity::job(
   $ensure = 'present',
-  $spoolfile,
+  $spoolfile = "${duplicity::params::job_spool}/${name}",
   $directory = undef,
   $bucket = $duplicity::params::bucket,
   $dest_id = $duplicity::params::dest_id,
@@ -57,8 +57,8 @@ define duplicity::job(
     }
   }
 
-  $_cfhash = { 'CLOUDFILES_USERNAME' => $_dest_id, 'CLOUDFILES_APIKEY'     => $_dest_key,}
-  $_awshash = { 'AWS_ACCESS_KEY_ID'  => $_dest_id, 'AWS_SECRET_ACCESS_KEY' => $_dest_key,}
+  $_cfhash = { 'CLOUDFILES_USERNAME' => $dest_id, 'CLOUDFILES_APIKEY'     => $dest_key,}
+  $_awshash = { 'AWS_ACCESS_KEY_ID'  => $dest_id, 'AWS_SECRET_ACCESS_KEY' => $dest_key,}
 
   $_environment = $cloud ? {
     'cf' => $_cfhash,

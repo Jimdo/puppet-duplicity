@@ -12,7 +12,7 @@ trap "" HUP WINCH
 export <%= key -%>='<%= value -%>'
 <% end-%>
 <%= @_pre_command %>
-duplicity --full-if-older-than <%= @_full_if_older_than -%> --s3-use-new-style <%= @_encryption -%> --include '<%= @directory -%>' --exclude '**' / <%= @_target_url -%>
-<%= @_remove_older_than_command %>
+duplicity --full-if-older-than <%= @full_if_older_than -%> --s3-use-new-style <%= @_encryption -%> --include '<%= @directory -%>' --exclude '**' / <%= @_target_url -%>
+<%= @remove_older_than_command %>
 
 exit 0
