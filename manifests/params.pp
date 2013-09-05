@@ -17,6 +17,14 @@ class duplicity::params(
     group  => root,
     mode   => 0755,
   }
+	
+  if $pubkey_id {
+    exec { 'duplicity-pgp-param':
+      command => "gpg --keyserver subkeys.pgp.net --recv-keys $pubkey_id",
+      path    => "/usr/bin:/usr/sbin:/bin",
+      unless  => "gpg --list-key $pubkey_id"
+    }
+  }
 
   File[$job_spool] -> Duplicity::Job <| |>
 }
