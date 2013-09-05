@@ -1,7 +1,7 @@
 define duplicity::job(
   $ensure = 'present',
-  $spoolfile = "${duplicity::params::job_spool}/${name}",
-  $directory = undef,
+  $spoolfile,
+  $directory = $name,
   $bucket = $duplicity::params::bucket,
   $dest_id = $duplicity::params::dest_id,
   $dest_key = $duplicity::params::dest_key,
