@@ -1,17 +1,19 @@
 define duplicity::job(
   $ensure = 'present',
-  $spoolfile,
-  $directory = undef,
+  $directory = $name,
   $bucket = undef,
   $dest_id = undef,
   $dest_key = undef,
   $folder = undef,
   $cloud = undef,
   $pubkey_id = undef,
+  $hour = undef,
+  $minute = undef,
   $full_if_older_than = undef,
-  $pre_command = undef,
   $remove_older_than = undef,
-  $default_exit_code = undef
+  $pre_command = undef,
+  $default_exit_code = undef,
+  $spoolfile,
 ) {
 
   include duplicity::params
@@ -64,12 +66,12 @@ define duplicity::job(
 
   $_pre_command = $pre_command ? {
     undef => '',
-    default => "$pre_command && "
+    default => "${pre_command} && "
   }
 
-  $_encryption = $_pubkey_id ? {
+  $_encryption = $pubkey_id ? {
     undef => '--no-encryption',
-    default => "--encrypt-key $_pubkey_id"
+    default => "--encrypt-key ${pubkey_id}"
   }
 
   $_remove_older_than = $remove_older_than ? {
@@ -93,7 +95,7 @@ define duplicity::job(
       }
 
       if (!$_dest_id or !$_dest_key) {
-        fail("You need to set all of your key variables: dest_id, dest_key")
+        fail('You need to set all of your key variables: dest_id, dest_key')
       }
 
     }
@@ -114,27 +116,23 @@ define duplicity::job(
   }
 
   $_target_url = $_cloud ? {
-    'cf' => "'cf+http://$_bucket'",
-    's3' => "'s3+http://$_bucket/$_folder/$name/'"
+    'cf' => "'cf+http://${_bucket}'",
+    's3' => "'s3+http://${_bucket}/${_folder}/${name}/'"
   }
 
   $_remove_older_than_command = $_remove_older_than ? {
     undef => '',
-    default => " && duplicity remove-older-than $_remove_older_than --s3-use-new-style $_encryption --force $_target_url"
+    default => " && duplicity remove-older-than ${_remove_older_than} --s3-use-new-style ${_encryption} --force ${_target_url}"
   }
 
   file { $spoolfile:
     ensure  => $ensure,
-    content => template("duplicity/file-backup.sh.erb"),
+    content => template('duplicity/file-backup.sh.erb'),
     owner   => 'root',
-    mode    => 0700,
+    mode    => '0700',
   }
 
   if $_pubkey_id {
-    exec { 'duplicity-pgp':
-      command => "gpg --keyserver subkeys.pgp.net --recv-keys $_pubkey_id",
-      path    => "/usr/bin:/usr/sbin:/bin",
-      unless  => "gpg --list-key $_pubkey_id"
-    }
+    @duplicity::gpg{ $_pubkey_id: }
   }
 }

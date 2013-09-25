@@ -135,7 +135,7 @@ describe 'duplicity::job' do
     end
 
     it "should download and import the specified pubkey" do
-      should contain_exec('duplicity-pgp') \
+      should contain_exec("duplicity-pgp-param-#{some_pubkey_id}") \
         .with_command("gpg --keyserver subkeys.pgp.net --recv-keys #{some_pubkey_id}") \
         .with_path("/usr/bin:/usr/sbin:/bin") \
         .with_unless("gpg --list-key #{some_pubkey_id}")
@@ -272,13 +272,6 @@ describe 'duplicity::job' do
         :spoolfile => "/path/to/some/spoolfile",
       },
       :expected_error_pattern => /ensure parameter must be absent or present/,
-    },
-    {
-      :params => {
-        :ensure    => 'present',
-        :spoolfile => "/path/to/some/spoolfile",
-      },
-      :expected_error_pattern => /directory parameter has to be passed if ensure != absent/,
     },
     {
       :params => {
