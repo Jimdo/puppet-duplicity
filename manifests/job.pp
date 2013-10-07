@@ -69,9 +69,9 @@ define duplicity::job(
     default => "${pre_command} && "
   }
 
-  $_encryption = $pubkey_id ? {
+  $_encryption = $_pubkey_id ? {
     undef => '--no-encryption',
-    default => "--encrypt-key ${pubkey_id}"
+    default => "--encrypt-key ${_pubkey_id}"
   }
 
   $_remove_older_than = $remove_older_than ? {
@@ -132,7 +132,7 @@ define duplicity::job(
     mode    => '0700',
   }
 
-  if $_pubkey_id {
+  if ($_pubkey_id and !defined(Duplicity::Gpg[$_pubkey_id])){
     @duplicity::gpg{ $_pubkey_id: }
   }
 }
