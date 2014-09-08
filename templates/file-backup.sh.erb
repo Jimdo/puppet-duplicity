@@ -9,7 +9,9 @@ trap "" HUP WINCH
 <% end %>
 
 <% @_environment.each do |key,value|-%>
+<%  unless value == :undef -%>
 export <%= key -%>='<%= value -%>'
+<%  end -%>
 <% end-%>
 <%= @pre_command %>
 duplicity --full-if-older-than <%= @_full_if_older_than -%> --s3-use-new-style <%= @_encryption -%> <%= @directory.map { |dir| "--include '#{dir}'" }.join " " -%> --exclude '**' / <%= @_target_url -%>

@@ -303,35 +303,6 @@ describe 'duplicity::job' do
       },
       :expected_error_pattern => /You need to define a container\/bucket name!/,
     },
-    {
-      :params => {
-        :ensure    => 'present',
-        :spoolfile => "/path/to/some/spoolfile",
-        :directory => '/path/to/backup',
-        :bucket    => 'somebucket',
-      },
-      :expected_error_pattern => /You need to set all of your key variables: dest_id, dest_key/,
-    },
-    {
-      :params => {
-        :ensure    => 'present',
-        :spoolfile => "/path/to/some/spoolfile",
-        :directory => '/path/to/backup',
-        :bucket    => 'somebucket',
-        :dest_id   => 'some_id',
-      },
-      :expected_error_pattern => /You need to set all of your key variables: dest_id, dest_key/,
-    },
-    {
-      :params => {
-        :ensure    => 'present',
-        :spoolfile => "/path/to/some/spoolfile",
-        :directory => '/path/to/backup',
-        :bucket    => 'somebucket',
-        :dest_key  => 'some_key',
-      },
-      :expected_error_pattern => /You need to set all of your key variables: dest_id, dest_key/,
-    },
   ]
 
   input_error_handling_cases.each do |error_case|
