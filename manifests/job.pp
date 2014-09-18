@@ -88,11 +88,6 @@ define duplicity::job(
       if !$_bucket {
         fail('You need to define a container/bucket name!')
       }
-
-      if (!$_dest_id or !$_dest_key) {
-        fail('You need to set all of your key variables: dest_id, dest_key')
-      }
-
     }
 
     'absent' : {
