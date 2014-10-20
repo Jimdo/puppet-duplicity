@@ -1,5 +1,6 @@
 fixtures:
   repositories:
     "periodicnoise" : "https://github.com/Jimdo/puppet-periodicnoise.git"
+    "stdlib": "https://github.com/puppetlabs/puppetlabs-stdlib"
   symlinks:
     "duplicity": "#{source_dir}"
