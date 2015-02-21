@@ -12,6 +12,7 @@ define duplicity(
   $full_if_older_than = undef,
   $pre_command = undef,
   $remove_older_than = undef,
+  $logfile = undef,
 ) {
 
   include duplicity::params
@@ -45,9 +46,19 @@ define duplicity(
     default => $minute
   }
 
+  $_logfile = $logfile ? {
+    undef   => $duplicity::params::logfile,
+    default => $logfile
+  }
+
+  $_croncommand = $_logfile ? {
+    undef   => $spoolfile,
+    default => "${spoolfile} >>${_logfile} 2>&1"
+  }
+
   cron { $name :
     ensure  => $ensure,
-    command => $spoolfile,
+    command => $_croncommand,
     user    => 'root',
     minute  => $_minute,
     hour    => $_hour,
