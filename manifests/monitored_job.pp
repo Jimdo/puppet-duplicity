@@ -15,6 +15,7 @@ define duplicity::monitored_job(
   $execution_timeout,
   $nagios_template = undef,
   $nagios_freshness_threshold = undef,
+  $allow_source_mismatch = undef,
 )
 {
   include duplicity::params
@@ -36,6 +37,8 @@ define duplicity::monitored_job(
     pre_command        => $pre_command,
     remove_older_than  => $remove_older_than,
     default_exit_code  => 2,
+    allow_source_mismatch => $allow_source_mismatch,
+
   }
 
   $_hour = $hour ? {

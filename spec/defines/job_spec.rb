@@ -316,4 +316,19 @@ describe 'duplicity::job' do
       end
     end
   end
+
+  context 'with allow_source_mismatch set' do
+    let(:params) {
+      {
+        :bucket                => 'somebucket',
+        :spoolfile             => spoolfile,
+        :allow_source_mismatch => 'true',
+      }
+    }
+
+    it "should contain --allow-source-mismatch param when backing up" do
+      should contain_file(spoolfile) \
+        .with_content(/ --allow-source-mismatch /)
+    end
+  end
 end

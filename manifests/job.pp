@@ -13,6 +13,7 @@ define duplicity::job(
   $remove_older_than = undef,
   $pre_command = undef,
   $default_exit_code = undef,
+  $allow_source_mismatch = undef,
   $spoolfile,
 ) {
 
@@ -72,6 +73,11 @@ define duplicity::job(
   $_remove_older_than = $remove_older_than ? {
     undef   => $duplicity::params::remove_older_than,
     default => $remove_older_than,
+  }
+
+  $_allow_source_mismatch = $allow_source_mismatch ? {
+    undef   => $duplicity::params::allow_source_mismatch,
+    default => ' --allow-source-mismatch',
   }
 
   if !($_cloud in [ 's3', 'cf' ]) {
