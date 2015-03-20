@@ -145,4 +145,17 @@ describe 'duplicity::monitored_job' do
       })
     end
   end
+
+  context 'with allow_source_mismatch set' do
+    let(:params) {
+      super.merge({
+        :allow_source_mismatch => 'true',
+    })}
+
+    it "should pass the allow_source_mismatch to duplicty job" do
+      should contain_duplicity__job(title)\
+        .with_allow_source_mismatch('true')
+    end
+  end
+
 end

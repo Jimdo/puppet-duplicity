@@ -14,7 +14,7 @@ export <%= key -%>='<%= value -%>'
 <%  end -%>
 <% end-%>
 <%= @pre_command %>
-duplicity --full-if-older-than <%= @_full_if_older_than -%> --s3-use-new-style <%= @_encryption -%> <%= @directory.map { |dir| "--include '#{dir}'" }.join " " -%> --exclude '**' / <%= @_target_url %>
+duplicity --full-if-older-than <%= @_full_if_older_than -%><%= @_allow_source_mismatch -%> --s3-use-new-style <%= @_encryption -%> <%= @directory.map { |dir| "--include '#{dir}'" }.join " " -%> --exclude '**' / <%= @_target_url %>
 <%= @_remove_older_than_command %>
 
 exit 0
