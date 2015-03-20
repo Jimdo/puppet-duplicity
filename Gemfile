@@ -7,6 +7,7 @@ else
 end
 
 gem 'rspec-puppet'
+gem 'rspec', '< 3.2.0'
 gem 'puppet-lint'
 gem 'puppet', puppetversion
 gem 'puppetlabs_spec_helper'
