@@ -9,6 +9,7 @@ class duplicity::params(
   $full_if_older_than    = $duplicity::defaults::full_if_older_than,
   $remove_older_than     = undef,
   $allow_source_mismatch = undef,
+  $logfile               = undef,
   $job_spool = $duplicity::defaults::job_spool
 ) inherits duplicity::defaults {
 
