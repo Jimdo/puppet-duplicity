@@ -60,6 +60,25 @@ describe 'duplicity', :type => :define do
     end
   end
 
+  context "with defined logfile" do
+    let(:command_with_log) { "#{spoolfile} >>/var/log/duplicity.log 2>&1" }
+
+    let(:params) {
+      {
+        :bucket       => 'somebucket',
+        :directory    => '/etc/',
+        :dest_id      => 'some_id',
+        :dest_key     => 'some_key',
+        :logfile      => '/var/log/duplicity.log'
+      }
+    }
+
+    it "should be able to handle a specified logfile" do
+       should contain_cron(title) \
+         .with_command(command_with_log)
+    end
+  end
+
   context 'with duplicity global parameters passed on' do
     let(:params) {
       {
