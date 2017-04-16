@@ -17,4 +17,10 @@ export <%= key -%>='<%= value -%>'
 duplicity --full-if-older-than <%= @_full_if_older_than -%><%= @_allow_source_mismatch -%> --s3-use-new-style <%= @_encryption -%> <%= @directory.map { |dir| "--include '#{dir}'" }.join " " -%> --exclude '**' / <%= @_target_url %>
 <%= @_remove_older_than_command %>
 
+duplicity_exit_code=$?
+if [ $duplicity_exit_code -ne 0 ]; then
+    echo "duplicity exited with exit code: $duplicity_exit_code"
+    exit 2
+fi
+
 exit 0
